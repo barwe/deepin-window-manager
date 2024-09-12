@@ -1,0 +1,24 @@
+{
+    "[jsonc]": {
+      "editor.tabSize": 2,
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[python]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "ms-python.black-formatter"
+    },
+    "black-formatter.args": ["--line-length", "200"],
+    "python.analysis.autoImportCompletions": true,
+    "python.analysis.typeCheckingMode": "off",
+    "files.exclude": {
+      "**/__pycache__": true,
+      "{manage.py,managenv.py,requirements.txt}": true,
+      "{cached,media,tgrpc,tmp}": true,
+      "**/migrations": true,
+      "**/apps.py": true,
+      "app_auth/models.py": true,
+      "{app_ms,app_geo,app_oss,app_shanxicdc}": true
+    }
+  }
+  

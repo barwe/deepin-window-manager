@@ -1,0 +1,1 @@
+pyinstaller -F -n VSCodeWindowManager run.py
