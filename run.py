@@ -9,7 +9,7 @@ if __name__ == "__main__":
     args, other = parser.parse_known_args()
     app = QApplication(other)
     window = MainWindow()
-    window.setWindowTitle("VSCode Window Manager")
+    window.setWindowTitle("Deepin Window Manager")
     window.setMinimumSize(400, 600)
     if args.screen:
         window.move_to_screen_center(args.screen)

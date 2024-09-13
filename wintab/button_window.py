@@ -22,11 +22,7 @@ class WindowButton(QPushButton):
     def setup_ui(self):
         win = self.win
         layout = QHBoxLayout()
-        if win.wm_class == "code.Code":
-            layout.addWidget(QLabel(win.vsc_workspace))
-            layout.addStretch()
-            layout.addWidget(QLabel(win.vsc_active))
-        else:
-            layout.addWidget(QLabel(win.wm_name))
-            layout.addStretch()
+        layout.addWidget(QLabel(win.data.get("left_text")))
+        layout.addStretch()
+        layout.addWidget(QLabel(win.data.get("right_text")))
         self.setLayout(layout)

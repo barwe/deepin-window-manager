@@ -1,1 +1,1 @@
-pyinstaller -F -n VSCodeWindowManager run.py
+pyinstaller -F -n DeepinWindowManager run.py

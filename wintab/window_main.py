@@ -1,5 +1,5 @@
 from collections import defaultdict
-from typing import List, DefaultDict, Sequence
+from typing import Dict, List, DefaultDict, Sequence
 from PySide6.QtCore import QTimer
 from PySide6.QtWidgets import QMainWindow, QWidget, QVBoxLayout, QHBoxLayout, QScrollArea
 from screeninfo import Monitor, get_monitors
@@ -7,6 +7,8 @@ from .ex import exlist
 from .exwindow import ExWindow
 from .button_window import WindowButton
 from .button_monitor import MonitorButton
+from .button_app import AppButton
+from .app_conf import APPS
 
 ACTIVE_MONITOR: Monitor = None
 ACTIVE_WINDOW: ExWindow = None
@@ -20,6 +22,8 @@ class MainWindow(QMainWindow):
         self._window_buttons: List[WindowButton] = []
         self._window_buttons_container = QScrollArea()
         self._previous_windows: str = None
+        self._activated_app_buttons: Dict[str, bool] = {"code.Code": True}
+        self._activated_all_apps = False
         self.setup_ui()
         self.watch_window_changes()
 
@@ -29,6 +33,7 @@ class MainWindow(QMainWindow):
         central_widget.setLayout(layout)
         self.setCentralWidget(central_widget)
         layout.addWidget(self.create_monitor_buttons_container())
+        layout.addWidget(self.create_app_buttons_container())
         layout.addWidget(self.create_window_buttons_container())
 
     def create_monitor_buttons_container(self):
@@ -57,6 +62,31 @@ class MainWindow(QMainWindow):
 
         container = QWidget()
         container.setLayout(layout)
+
+        return container
+
+    def create_app_buttons_container(self):
+        layout = QHBoxLayout()
+        layout.setContentsMargins(0, 0, 0, 0)
+        container = QWidget()
+        container.setLayout(layout)
+
+        def on_app_button_clicked(app_name: str, is_active: bool):
+            if app_name == "__ALL__":
+                self._activated_all_apps = not self._activated_all_apps
+            else:
+                self._activated_app_buttons[app_name] = is_active
+            self.rerender_window_buttons_container()
+
+        button = AppButton("所有", wm_class="__ALL__", active=False)
+        button.clicked2.connect(on_app_button_clicked)
+        layout.addWidget(button)
+
+        for wm_class in APPS:
+            is_active = self._activated_app_buttons.get(wm_class, False)
+            button = AppButton(APPS[wm_class]["t"], wm_class=wm_class, active=is_active)
+            button.clicked2.connect(on_app_button_clicked)
+            layout.addWidget(button)
 
         return container
 
@@ -138,8 +168,12 @@ class MainWindow(QMainWindow):
         self._window_buttons_container.update()
 
     def list_windows(self):
-        windows = ExWindow.list_windows(["code.Code"])
-        flag = " ".join(sorted([w.wm_name for w in windows]))
+        if self._activated_all_apps:
+            activated_apps = list(APPS.keys())
+        else:
+            activated_apps = [k for k, v in self._activated_app_buttons.items() if v]
+        windows = ExWindow.list_windows(activated_apps)
+        flag = " ".join(sorted([w.id for w in windows]))
         if flag == self._previous_windows:
             return False, windows
         self._previous_windows = flag

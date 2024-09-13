@@ -13,12 +13,7 @@
     "python.analysis.typeCheckingMode": "off",
     "files.exclude": {
       "**/__pycache__": true,
-      "{manage.py,managenv.py,requirements.txt}": true,
-      "{cached,media,tgrpc,tmp}": true,
-      "**/migrations": true,
-      "**/apps.py": true,
-      "app_auth/models.py": true,
-      "{app_ms,app_geo,app_oss,app_shanxicdc}": true
+      "build":true,
     }
   }
   

@@ -1,15 +1,17 @@
 import subprocess
 from typing import Sequence
 from wmctrl import Window, getoutput
+from .app_conf import better_window
 
 
 class ExWindow(Window):
     wm_class: str
     wm_name: str
-    vsc_active: str = None
-    vsc_workspace: str = None
-    uid: str = None
-    is_minimized = False
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.data: dict[str, str] = {}
+        self.is_minimized = False
 
     def xdt_maximize(self):
         self.is_minimized = False
@@ -39,21 +41,13 @@ class ExWindow(Window):
         return windows
 
     @staticmethod
-    def list_windows(include=None) -> Sequence["ExWindow"]:
+    def list_windows(include) -> Sequence["ExWindow"]:
         windows = []
-        for d in ExWindow.list():
-            if d.desktop == -1:
+        include = include or []
+        for win in ExWindow.list():
+            if win.desktop == -1:
                 continue
-            if include and d.wm_class not in include:
+            if win.wm_class not in include:
                 continue
-
-            if d.wm_class == "code.Code":
-                a = d.wm_name.split(" - ")
-                if len(a) == 3:
-                    d.vsc_active = a[0]
-                    d.vsc_workspace = a[1]
-                elif len(a) == 2:
-                    d.vsc_workspace = a[0]
-
-            windows.append(d)
+            windows.append(better_window(win))
         return sorted(windows, key=lambda d: d.wm_class)
